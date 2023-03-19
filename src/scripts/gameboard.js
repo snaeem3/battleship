@@ -2,7 +2,7 @@ import { ship } from './ship';
 
 export const gameboard = function (gridSize = 12) {
   const spaceObject = {
-    hitStatus: false,
+    hitStatus: null,
     containsShip: false,
     shipIndex: null,
   };
@@ -35,9 +35,34 @@ export const gameboard = function (gridSize = 12) {
     // Update contains ship status and index in ships array
     coordinates.forEach((coordinate) => {
       board[coordinate[0]][coordinate[1]].containsShip = true;
-      board[coordinate[0]][coordinate[1]].shipIndex = ships.length;
+      board[coordinate[0]][coordinate[1]].shipIndex = ships.length - 1;
     });
   };
 
-  return { board, insertShip };
+  const receiveAttack = (coordinate) => {
+    if (board[coordinate[0]][coordinate[1]].hitStatus !== null) {
+      throw new Error(
+        `[${coordinate[0]},${coordinate[1]}] has already been attacked`
+      );
+    }
+
+    if (!board[coordinate[0]][coordinate[1]].containsShip) {
+      board[coordinate[0]][coordinate[1]].hitStatus = false;
+    } else {
+      board[coordinate[0]][coordinate[1]].hitStatus = true;
+      // console.log(board[coordinate[0]][coordinate[1]].shipIndex);
+      ships[board[coordinate[0]][coordinate[1]].shipIndex].hit();
+    }
+  };
+
+  return {
+    get board() {
+      return board;
+    },
+    get ships() {
+      return ships;
+    },
+    insertShip,
+    receiveAttack,
+  };
 };
