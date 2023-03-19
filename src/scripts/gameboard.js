@@ -1,14 +1,19 @@
 import { ship } from './ship';
 
 export const gameboard = function (gridSize = 12) {
-  const spaceObject = {
-    hitStatus: null,
-    containsShip: false,
-    shipIndex: null,
-  };
-  const board = [...Array(gridSize)].map((e) =>
-    Array(gridSize).fill(spaceObject)
-  );
+  const board = [];
+
+  // Create board of empty objects
+  for (let i = 0; i < gridSize; i++) {
+    board.push([]);
+    for (let j = 0; j < gridSize; j++) {
+      board[i].push({
+        hitStatus: null,
+        containsShip: false,
+        shipIndex: null,
+      });
+    }
+  }
 
   const ships = [];
 
@@ -23,6 +28,8 @@ export const gameboard = function (gridSize = 12) {
 
       // Check if any coordinates have a ship in them already
       if (board[coordinate[0]][coordinate[1]].containsShip) {
+        // console.log(board);
+        // console.log(`coordinate: ${coordinate}`);
         throw new Error(
           `[${coordinate[0]},${coordinate[1]}] is already occupied`
         );
@@ -55,6 +62,16 @@ export const gameboard = function (gridSize = 12) {
     }
   };
 
+  const allShipsSunk = () => {
+    let noSunkShips = true;
+    ships.forEach((currentShip) => {
+      if (!currentShip.isSunk()) {
+        noSunkShips = false;
+      }
+    });
+    return noSunkShips;
+  };
+
   return {
     get board() {
       return board;
@@ -64,5 +81,6 @@ export const gameboard = function (gridSize = 12) {
     },
     insertShip,
     receiveAttack,
+    allShipsSunk,
   };
 };
