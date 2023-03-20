@@ -16,7 +16,7 @@ test('Creates a human and computer player', () => {
   const player2 = player('Computer', testBoard2, true);
 });
 
-test.skip('Player 1 can play round', () => {
+test('Player 1 can play round', () => {
   const testBoard1 = gameboard();
   const testBoard2 = gameboard();
   const coordinates = [
@@ -30,7 +30,10 @@ test.skip('Player 1 can play round', () => {
   const player1 = player('Steve', testBoard1, false);
   const player2 = player('Computer', testBoard2, true);
 
-  const { choosenCoords, hitShip } = player1.playRound(player2);
+  const { chosenCoords, hitShip } = player1.playRound(player2);
+  expect(
+    player2.playerBoard.board[chosenCoords[0]][chosenCoords[1]].hitStatus
+  ).not.toBeNull();
   // console.log(`Player 2 board: ${player2.playerBoard.board}`);
 });
 
@@ -49,6 +52,9 @@ test('Computer player can play round', () => {
   const player2 = player('Computer', testBoard2, true);
 
   const { chosenCoords, hitShip } = player2.playRound(player1);
+  expect(
+    player1.playerBoard.board[chosenCoords[0]][chosenCoords[1]].hitStatus
+  ).not.toBeNull();
   // console.log(chosenCoords);
   // console.log(`Hit ship? ${hitShip}`);
   // console.log(player1.playerBoard.board);
