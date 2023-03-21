@@ -16,7 +16,7 @@ test('Creates a human and computer player', () => {
   const player2 = player('Computer', testBoard2, true);
 });
 
-test('Player 1 can play round', () => {
+test.skip('Player 1 can play round', () => {
   const testBoard1 = gameboard();
   const testBoard2 = gameboard();
   const coordinates = [

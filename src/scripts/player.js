@@ -1,6 +1,6 @@
 import { gameboard } from './gameboard';
 
-const prompt = require('prompt-sync')({ sigint: true });
+// const prompt = require('prompt-sync')({ sigint: true });
 
 export const player = function (name, playerBoard, computerPlayer) {
   const playRound = (opponent) => {

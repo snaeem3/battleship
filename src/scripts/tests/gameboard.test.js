@@ -7,7 +7,13 @@ test('Create board with empty spaces', () => {
 });
 
 describe('Insert ship tests', () => {
-  test('Add ship to board', () => {
+  test('Add ship of length 1 to board', () => {
+    const testBoard = gameboard();
+    const coordinates = [[1, 1]];
+    testBoard.insertShip(coordinates);
+    expect(testBoard.board[1][1].containsShip).toBeTruthy();
+  });
+  test('Add ship of length > 1 to board', () => {
     const testBoard = gameboard();
     const coordinates = [
       [1, 1],
