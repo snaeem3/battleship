@@ -56,4 +56,9 @@ button:not(:disabled):hover {
 
 .grid-cell {
   border: solid 1px black;
+  padding: var(--section-padding);
+}
+
+.ship {
+  background: gray;
 }

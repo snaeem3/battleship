@@ -182,3 +182,29 @@ test('allShipsSunk returns true when all ships ar sunk', () => {
 
   expect(testBoard.allShipsSunk()).toBeTruthy();
 });
+
+test('getPossibleShipCoords returns correct number of options for an empty board', () => {
+  expect(
+    gameboard(4).getPossibleShipCoords(2).possibleHorizontalCoords.length
+  ).toBe(12);
+  expect(
+    gameboard(4).getPossibleShipCoords(2).possibleVerticalCoords.length
+  ).toBe(12);
+});
+
+test('getPossibleShipCoords returns correctly when a ship is on board', () => {
+  const testBoard = gameboard(4);
+
+  testBoard.insertShip([
+    [1, 1],
+    [1, 2],
+    [1, 3],
+  ]);
+
+  expect(
+    testBoard.getPossibleShipCoords(2).possibleHorizontalCoords.length
+  ).toBe(6);
+  expect(testBoard.getPossibleShipCoords(2).possibleVerticalCoords.length).toBe(
+    9
+  );
+});

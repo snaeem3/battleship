@@ -3,8 +3,11 @@ import { gameboard } from './gameboard';
 // const prompt = require('prompt-sync')({ sigint: true });
 
 export const player = function (name, playerBoard, computerPlayer) {
-  const playRound = (opponent) => {
-    const targetCoords = chooseUnhitSpace(opponent.playerBoard);
+  const playRound = (
+    opponent,
+    targetCoords = chooseUnhitSpace(opponent.playerBoard)
+  ) => {
+    // const targetCoords = chooseUnhitSpace(opponent.playerBoard);
     opponent.playerBoard.receiveAttack(targetCoords);
 
     // Return hitShip = true if the player hit an opponent ship
@@ -48,6 +51,7 @@ export const player = function (name, playerBoard, computerPlayer) {
   }
 
   return {
+    name,
     get playerBoard() {
       return playerBoard;
     },

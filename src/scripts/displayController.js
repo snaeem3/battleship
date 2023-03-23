@@ -3,9 +3,18 @@ import { player } from './player';
 
 const main = document.querySelector('main');
 
+const player1Container = document.createElement('div');
+const player2Container = document.createElement('div');
+player1Container.setAttribute('id', 'player1-container');
+player2Container.setAttribute('id', 'player2-container');
+
 function loadStartScreen() {
+  removeAllChildNodes(main);
   console.log('Start screen loaded');
   loadGridSetup(main);
+  const clearBoardBtn = document.createElement('button');
+  const randomizeBoardBtn = document.createElement('button');
+
   const startButton = document.createElement('button');
   startButton.setAttribute('id', 'start-button');
   startButton.textContent = 'Start Game';
@@ -36,20 +45,29 @@ function loadStartScreen() {
 }
 
 function loadGame() {
-  removeAllChildNodes(main);
-
+  removeAllChildNodes(main); // remove grid setup elements
+  removeAllChildNodes(player1Container);
+  removeAllChildNodes(player2Container);
+  gameController.resetPlayers();
   gameController.setPlayers(); // input player 1 selected ship locations here
-
-  const player1Container = document.createElement('div');
-  const player2Container = document.createElement('div');
-
-  loadBoard(gameController.players[0], true, player1Container);
-  loadBoard(gameController.players[1], false, player2Container);
-
   main.append(player1Container, player2Container);
+
+  const boardContainer1 = loadBoardContainer(
+    gameController.players[0],
+    true,
+    player1Container
+  );
+  const boardContainer2 = loadBoardContainer(
+    gameController.players[1],
+    false,
+    player2Container
+  );
+
+  player1Container.appendChild(boardContainer1);
+  player2Container.appendChild(boardContainer2);
 }
 
-function loadBoard(currentPlayer, showAllShips, parentNode) {
+function loadBoardContainer(currentPlayer, showAllShips, node) {
   const boardContainer = document.createElement('div');
   boardContainer.classList.add('grid');
   const gridValues = currentPlayer.playerBoard.board;
@@ -63,6 +81,7 @@ function loadBoard(currentPlayer, showAllShips, parentNode) {
         // Computer player board inputted so add coordinate data for player to click
         cell.dataset.xCoord = i;
         cell.dataset.yCoord = j;
+        cell.addEventListener('click', clickHandlerBoard);
       }
       if (gridValues[i][j].hitStatus !== null) {
         // Cell has been attacked
@@ -71,7 +90,7 @@ function loadBoard(currentPlayer, showAllShips, parentNode) {
           cell.textContent = 'X';
         } else {
           cell.classList.add('miss');
-          cell.textContent = 'Y';
+          cell.textContent = 'O';
         }
       }
 
@@ -83,14 +102,70 @@ function loadBoard(currentPlayer, showAllShips, parentNode) {
     }
   }
 
-  parentNode.append(boardContainer);
+  return boardContainer;
+
+  // parentNode.append(boardContainer);
+  // parentNode = boardContainer;
 }
 
-function loadWinnerMessage(winningPlayer) {}
+function loadWinnerMessage(winningPlayer) {
+  disableGridCells();
+
+  const winningMessage = document.createElement('div');
+  winningMessage.setAttribute('id', 'winning-message');
+  winningMessage.textContent = `${winningPlayer.name} wins!`;
+
+  const newGameBtn = document.createElement('button');
+  newGameBtn.textContent = 'Start New Game';
+  newGameBtn.addEventListener('click', loadStartScreen);
+
+  main.append(winningMessage, newGameBtn);
+}
 
 function clickHandlerBoard(event) {
+  console.log('clickHandlerBoard called');
+  console.log(event.target);
   const coords = [event.target.dataset.xCoord, event.target.dataset.yCoord];
-  gameController.playRound(coords);
+  // Check if chosen coordinate has not been attacked yet
+  if (
+    gameController.players[1].playerBoard.board[coords[0]][coords[1]]
+      .hitStatus === null
+  ) {
+    let roundResult = gameController.playRoundActive(coords);
+    console.log(roundResult);
+    removeAllChildNodes(player2Container);
+    player2Container.appendChild(
+      loadBoardContainer(gameController.players[1], false, player2Container)
+    );
+
+    // Check if player 2 lost
+    if (gameController.playerLoses(gameController.players[1])) {
+      console.log('Player 2 lost');
+      loadWinnerMessage(gameController.players[0]);
+    } else {
+      // Otherwise play the next round
+
+      roundResult = gameController.playRoundActive();
+      console.log(roundResult);
+      removeAllChildNodes(player1Container);
+      player1Container.appendChild(
+        loadBoardContainer(gameController.players[0], true)
+      );
+
+      // Check if player 1 lost
+      if (gameController.playerLoses(gameController.players[0])) {
+        console.log('Player 1 lost');
+        loadWinnerMessage(gameController.players[1]);
+      }
+    }
+  }
+}
+
+function disableGridCells() {
+  const gridCells = document.querySelectorAll('#player2-container .grid-cell');
+  gridCells.forEach((cell) => {
+    cell.removeEventListener('click', clickHandlerBoard);
+  });
 }
 
 function removeAllChildNodes(parent) {
@@ -102,7 +177,7 @@ function removeAllChildNodes(parent) {
 export {
   loadStartScreen,
   loadGame,
-  loadBoard,
+  loadBoardContainer,
   loadWinnerMessage,
   clickHandlerBoard,
 };
