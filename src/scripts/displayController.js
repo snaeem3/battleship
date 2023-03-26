@@ -9,8 +9,9 @@ player1Container.setAttribute('id', 'player1-container');
 player2Container.setAttribute('id', 'player2-container');
 
 function loadStartScreen() {
-  removeAllChildNodes(main);
   console.log('Start screen loaded');
+  removeAllChildNodes(main);
+  gameController.clearSetupShips();
   loadGridSetup(main);
   loadShipStart([2, 3], main);
   const clearBoardBtn = document.createElement('button');
