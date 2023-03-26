@@ -12,13 +12,14 @@ function loadStartScreen() {
   removeAllChildNodes(main);
   console.log('Start screen loaded');
   loadGridSetup(main);
-  loadShipStart([2, 2], main);
+  loadShipStart([2, 3], main);
   const clearBoardBtn = document.createElement('button');
   const randomizeBoardBtn = document.createElement('button');
 
   const startButton = document.createElement('button');
   startButton.setAttribute('id', 'start-button');
   startButton.textContent = 'Start Game';
+  startButton.disabled = true;
   startButton.addEventListener('click', () => {
     loadGame();
   });
@@ -136,6 +137,7 @@ function loadStartScreen() {
         return;
       }
 
+      const shipCoords = [];
       // Set each selected cell to be a ship
       if (isHorizontalShip()) {
         for (let x = xPosition; x < xPosition + getCurrentShipSize(); x++) {
@@ -145,6 +147,7 @@ function loadStartScreen() {
           cell.classList.add('ship');
           cell.removeEventListener('dragenter', dragEnter);
           cell.removeEventListener('drop', drop);
+          shipCoords.push([x, yPosition]);
         }
       } else {
         for (let y = yPosition; y < yPosition + getCurrentShipSize(); y++) {
@@ -154,14 +157,25 @@ function loadStartScreen() {
           cell.classList.add('ship');
           cell.removeEventListener('dragenter', dragEnter);
           cell.removeEventListener('drop', drop);
+          shipCoords.push([xPosition, y]);
         }
       }
 
-      // Add coordinates to array
+      // Add coordinates to gameController setup Array
+      gameController.addSetupShip(shipCoords);
 
       // Remove ship from shipContainer
       const shipContainer = document.querySelector('#shipContainer');
       shipContainer.removeChild(shipContainer.firstChild);
+
+      if (shipContainer.hasChildNodes()) {
+        shipContainer.firstChild.draggable = true;
+      }
+
+      // Enable start button if all ships placed
+      if (shipContainer.childElementCount < 1) {
+        document.querySelector('#start-button').disabled = false;
+      }
     }
 
     function evaluateAllValidPositions(startingPosition, length, horizontal) {
@@ -228,7 +242,7 @@ function loadStartScreen() {
       const ship = document.createElement('div');
       ship.classList.add('draggable');
       ship.classList.add('ship');
-      ship.draggable = true;
+      // ship.draggable = true;
       ship.dataset.isHorizontal = true;
       ship.addEventListener('dragstart', dragStart);
       function dragStart(event) {
@@ -248,6 +262,8 @@ function loadStartScreen() {
 
       shipContainer.append(ship);
     });
+
+    shipContainer.firstChild.draggable = true;
 
     parentNode.append(rotateBtn, shipContainer, resetBoardBtn);
   }

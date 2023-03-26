@@ -63,7 +63,8 @@ button:not(:disabled):hover {
   background: gray;
 }
 
-.draggable {
+/* .draggable  */
+[draggable="true"] {
   cursor: move;
 }
 

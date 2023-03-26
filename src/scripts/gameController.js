@@ -5,9 +5,26 @@ import * as displayController from './displayController';
 let players = [];
 let activePlayer = null;
 let inActivePlayer = null;
+let setupShips = [];
+
+function addSetupShip(coords) {
+  setupShips.push(coords);
+}
+
+function clearSetupShips() {
+  setupShips = [];
+}
+
+function generateSetupBoard() {
+  const setupBoard = gameboard();
+  setupShips.forEach((setupShip) => {
+    setupBoard.insertShip(setupShip);
+  });
+  return setupBoard;
+}
 
 function setPlayers(
-  player1 = player('Player 1', generateRandomBoard(), false),
+  player1 = player('Player 1', generateSetupBoard(), false),
   player2 = generateComputerPlayer()
 ) {
   players.push(player1);
@@ -81,4 +98,12 @@ function playerLoses(currentPlayer) {
   return currentPlayer.playerBoard.allShipsSunk();
 }
 
-export { players, setPlayers, resetPlayers, playRoundActive, playerLoses };
+export {
+  addSetupShip,
+  clearSetupShips,
+  players,
+  setPlayers,
+  resetPlayers,
+  playRoundActive,
+  playerLoses,
+};
