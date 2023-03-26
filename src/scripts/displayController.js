@@ -12,6 +12,7 @@ function loadStartScreen() {
   removeAllChildNodes(main);
   console.log('Start screen loaded');
   loadGridSetup(main);
+  loadShipStart([2, 2], main);
   const clearBoardBtn = document.createElement('button');
   const randomizeBoardBtn = document.createElement('button');
 
@@ -35,12 +36,220 @@ function loadStartScreen() {
         cell.dataset.xSetup = i;
         cell.dataset.ySetup = j;
         cell.classList.add('grid-cell');
+        cell.addEventListener('dragenter', dragEnter);
+        cell.addEventListener('dragover', dragOver);
+        cell.addEventListener('dragleave', dragLeave);
+        cell.addEventListener('drop', drop);
 
         gridContainer.appendChild(cell);
       }
     }
 
     parentNode.append(gridContainer);
+
+    function dragEnter(event) {
+      event.preventDefault();
+      const hoveredCells = document.querySelectorAll('.dragHover');
+      hoveredCells.forEach((cell) =>
+        cell.classList.remove(
+          'dragHover',
+          'dragHover-valid',
+          'dragHover-invalid'
+        )
+      );
+
+      const xPosition = parseInt(event.target.dataset.xSetup);
+      const yPosition = parseInt(event.target.dataset.ySetup);
+      let hoverClass = '';
+      if (
+        evaluateAllValidPositions(
+          [xPosition, yPosition],
+          getCurrentShipSize(),
+          isHorizontalShip()
+        )
+      ) {
+        hoverClass = 'dragHover-valid';
+      } else {
+        hoverClass = 'dragHover-invalid';
+      }
+
+      if (isHorizontalShip()) {
+        for (
+          let x = xPosition;
+          x < parseInt(xPosition) + getCurrentShipSize();
+          x++
+        ) {
+          const cell = document.querySelector(
+            `[data-x-setup~="${x}"][data-y-setup~="${yPosition}"]`
+          );
+          console.log(cell.textContent);
+          cell.classList.add('dragHover');
+          cell.classList.add(hoverClass);
+        }
+      } else {
+        for (
+          let y = yPosition;
+          y < parseInt(yPosition) + getCurrentShipSize();
+          y++
+        ) {
+          const cell = document.querySelector(
+            `[data-x-setup~="${xPosition}"][data-y-setup~="${y}"]`
+          );
+          console.log(cell.textContent);
+          cell.classList.add('dragHover');
+          cell.classList.add(hoverClass);
+        }
+      }
+    }
+
+    function dragOver(event) {
+      event.preventDefault();
+      // console.log('dragover called');
+      // console.log(event.target);
+    }
+
+    function dragLeave(event) {
+      // event.target.classList.remove('dragHover');
+    }
+
+    function drop(event) {
+      const hoveredCells = document.querySelectorAll('.dragHover');
+      hoveredCells.forEach((cell) =>
+        cell.classList.remove(
+          'dragHover',
+          'dragHover-valid',
+          'dragHover-invalid'
+        )
+      );
+
+      const xPosition = parseInt(event.target.dataset.xSetup);
+      const yPosition = parseInt(event.target.dataset.ySetup);
+      // Do not continue if invalid drop location
+      if (
+        !evaluateAllValidPositions(
+          [xPosition, yPosition],
+          getCurrentShipSize(),
+          isHorizontalShip()
+        )
+      ) {
+        console.error(`${xPosition},${yPosition} is invalid`);
+        return;
+      }
+
+      // Set each selected cell to be a ship
+      if (isHorizontalShip()) {
+        for (let x = xPosition; x < xPosition + getCurrentShipSize(); x++) {
+          const cell = gridContainer.querySelector(
+            `[data-x-setup~="${x}"][data-y-setup~="${yPosition}"]`
+          );
+          cell.classList.add('ship');
+          cell.removeEventListener('dragenter', dragEnter);
+          cell.removeEventListener('drop', drop);
+        }
+      } else {
+        for (let y = yPosition; y < yPosition + getCurrentShipSize(); y++) {
+          const cell = gridContainer.querySelector(
+            `[data-x-setup~="${xPosition}"][data-y-setup~="${y}"]`
+          );
+          cell.classList.add('ship');
+          cell.removeEventListener('dragenter', dragEnter);
+          cell.removeEventListener('drop', drop);
+        }
+      }
+
+      // Add coordinates to array
+
+      // Remove ship from shipContainer
+      const shipContainer = document.querySelector('#shipContainer');
+      shipContainer.removeChild(shipContainer.firstChild);
+    }
+
+    function evaluateAllValidPositions(startingPosition, length, horizontal) {
+      // Check if ship goes outside grid bounds
+      if (horizontal && startingPosition[0] + length > gridSize) {
+        return false;
+      }
+      if (!horizontal && startingPosition[1] + length > gridSize) {
+        return false;
+      }
+
+      // Check if ship interferes with existing ship
+      if (horizontal) {
+        for (
+          let x = startingPosition[0];
+          x < startingPosition[0] + length;
+          x++
+        ) {
+          const cell = gridContainer.querySelector(
+            `[data-x-setup~="${x}"][data-y-setup~="${startingPosition[1]}"]`
+          );
+          if (cell.classList.contains('ship')) {
+            return false;
+          }
+        }
+      } else {
+        for (
+          let y = startingPosition[1];
+          y < startingPosition[1] + length;
+          y++
+        ) {
+          const cell = gridContainer.querySelector(
+            `[data-x-setup~="${startingPosition[0]}"][data-y-setup~="${y}"]`
+          );
+          if (cell.classList.contains('ship')) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    function getCurrentShipSize() {
+      const shipContainer = document.querySelector('#shipContainer');
+      return shipContainer.firstChild.childElementCount;
+    }
+
+    function isHorizontalShip() {
+      return true;
+    }
+  }
+
+  function loadShipStart(shipSizeArray = [5, 4, 3, 3, 2], parentNode = main) {
+    const rotateBtn = document.createElement('button');
+    rotateBtn.textContent = 'Rotate Ship';
+    const shipContainer = document.createElement('div');
+    shipContainer.setAttribute('id', 'shipContainer');
+    const resetBoardBtn = document.createElement('button');
+    resetBoardBtn.textContent = 'Reset Board';
+
+    // Create a ship div for every ship
+    shipSizeArray.forEach((shipSize) => {
+      const ship = document.createElement('div');
+      ship.classList.add('draggable');
+      ship.classList.add('ship');
+      ship.draggable = true;
+      ship.dataset.isHorizontal = true;
+      ship.addEventListener('dragstart', dragStart);
+      function dragStart(event) {
+        event.dataTransfer.clearData();
+        event.dataTransfer.setData('text/plain', JSON.stringify({ shipSize }));
+      }
+
+      // Add divs equal to ship size to each ship div
+      for (let i = 0; i < shipSize; i++) {
+        const shipUnit = document.createElement('div');
+        shipUnit.textContent = i;
+        shipUnit.dataset.index = i;
+        shipUnit.classList.add('ship-unit');
+        shipUnit.classList.add('grid-cell');
+        ship.appendChild(shipUnit);
+      }
+
+      shipContainer.append(ship);
+    });
+
+    parentNode.append(rotateBtn, shipContainer, resetBoardBtn);
   }
 }
 

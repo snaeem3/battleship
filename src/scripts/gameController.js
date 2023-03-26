@@ -6,33 +6,6 @@ let players = [];
 let activePlayer = null;
 let inActivePlayer = null;
 
-// const gameController = (player1, player2) => {
-//   let gameComplete = false;
-//   let player1Turn = true;
-//   let winner = null;
-//   while (!gameComplete) {
-//     if (player1Turn) {
-//       const { chosenCoords, hitShip } = player1.playRound(player2);
-//       if (player2.playerBoard.allShipsSunk()) {
-//         gameComplete = true;
-//         winner = player1;
-//       }
-//       displayController.loadBoardContainer(player2, false);
-//       player1Turn = false;
-//     } else {
-//       const { chosenCoords, hitShip } = player2.playRound(player1);
-//       if (player1.playerBoard.allShipsSunk()) {
-//         gameComplete = true;
-//         winner = player2;
-//       }
-//       displayController.loadBoardContainer(player1, true);
-//       player1Turn = true;
-//     }
-//   }
-
-//   return winner;
-// };
-
 function setPlayers(
   player1 = player('Player 1', generateRandomBoard(), false),
   player2 = generateComputerPlayer()
@@ -58,8 +31,7 @@ function generateComputerPlayer(shipSizeArr, gridSize = 12) {
 
 function generateRandomBoard(shipSizeArr = [2, 2], gridSize = 12) {
   const randomBoard = gameboard(gridSize);
-  // TEMPORARY BOARD, replace with random board code later
-  // randomBoard.insertShip([[2, 2]]);
+  // randomBoard.insertShip([[2, 2]]); // Temporary board code
 
   // Assume total ship area < grid area or add check here later
 
@@ -89,44 +61,6 @@ function generateRandomBoard(shipSizeArr = [2, 2], gridSize = 12) {
   });
 
   return randomBoard;
-
-  // function getPossibleShipCoords(board, shipLength) {
-  //   const horizontalCoords = [];
-  //   const verticalCoords = [];
-
-  //   for (let i = 0; i < board.length; i++) {
-  //     for (let j = 0; j < board[i].length; j++) {
-  //       // Create an array of horizontal and vertical  coordinates for the potential ship
-  //       const tempHorizontalCoords = [];
-  //       const tempVerticalCoords = [];
-
-  //       for (let k = 0; k < shipLength; k++) {
-  //         // Check that the coordinate is inside the board and not occupied by a ship
-  //         if (i + k < board.length && !board[i + k][j].containsShip) {
-  //           tempHorizontalCoords.push([i + k, j]);
-  //         }
-
-  //         if (j + k < board.length && !board[i][j + k].containsShip) {
-  //           tempVerticalCoords.push([i, j + k]);
-  //         }
-  //       }
-
-  //       // if the tempCoordinates length matches shipLength then all coordinates are valid
-  //       if (tempHorizontalCoords.length === shipLength) {
-  //         horizontalCoords.push(tempHorizontalCoords);
-  //       }
-
-  //       if (tempVerticalCoords.length === shipLength) {
-  //         verticalCoords.push(tempVerticalCoords);
-  //       }
-  //     }
-  //   }
-
-  //   return {
-  //     possibleHorizontalCoords: horizontalCoords,
-  //     possibleVerticalCoords: verticalCoords,
-  //   };
-  // }
 }
 
 function playRoundActive(

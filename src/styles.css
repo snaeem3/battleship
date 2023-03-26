@@ -62,3 +62,15 @@ button:not(:disabled):hover {
 .ship {
   background: gray;
 }
+
+.draggable {
+  cursor: move;
+}
+
+.dragHover-valid {
+  background: lightgreen;
+}
+
+.dragHover-invalid {
+  background: red;
+}
