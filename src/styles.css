@@ -63,7 +63,7 @@ button:not(:disabled):hover {
   background: gray;
 }
 
-/* .draggable  */
+/* Currently draggable elements  */
 [draggable="true"] {
   cursor: move;
 }
@@ -74,4 +74,8 @@ button:not(:disabled):hover {
 
 .dragHover-invalid {
   background: red;
+}
+
+.vertical {
+  display: flex;
 }

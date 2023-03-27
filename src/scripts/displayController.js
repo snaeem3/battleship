@@ -12,6 +12,8 @@ function loadStartScreen() {
   console.log('Start screen loaded');
   removeAllChildNodes(main);
   gameController.clearSetupShips();
+
+  let horizontal = true; // current ship orientation
   loadGridSetup(main);
   loadShipStart([2, 3], main);
   const clearBoardBtn = document.createElement('button');
@@ -226,12 +228,13 @@ function loadStartScreen() {
     }
 
     function isHorizontalShip() {
-      return true;
+      return horizontal;
     }
   }
 
   function loadShipStart(shipSizeArray = [5, 4, 3, 3, 2], parentNode = main) {
     const rotateBtn = document.createElement('button');
+    rotateBtn.addEventListener('click', rotateCurrentShip);
     rotateBtn.textContent = 'Rotate Ship';
     const shipContainer = document.createElement('div');
     shipContainer.setAttribute('id', 'shipContainer');
@@ -243,6 +246,7 @@ function loadStartScreen() {
       const ship = document.createElement('div');
       ship.classList.add('draggable');
       ship.classList.add('ship');
+
       // ship.draggable = true;
       ship.dataset.isHorizontal = true;
       ship.addEventListener('dragstart', dragStart);
@@ -254,7 +258,7 @@ function loadStartScreen() {
       // Add divs equal to ship size to each ship div
       for (let i = 0; i < shipSize; i++) {
         const shipUnit = document.createElement('div');
-        shipUnit.textContent = i;
+        // shipUnit.textContent = i;
         shipUnit.dataset.index = i;
         shipUnit.classList.add('ship-unit');
         shipUnit.classList.add('grid-cell');
@@ -267,6 +271,19 @@ function loadStartScreen() {
     shipContainer.firstChild.draggable = true;
 
     parentNode.append(rotateBtn, shipContainer, resetBoardBtn);
+
+    function rotateCurrentShip() {
+      horizontal = !horizontal;
+      if (horizontal) {
+        document
+          .querySelector('#shipContainer > div:nth-child(1)')
+          .classList.remove('vertical');
+      } else {
+        document
+          .querySelector('#shipContainer > div:nth-child(1)')
+          .classList.add('vertical');
+      }
+    }
   }
 }
 
