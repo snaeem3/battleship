@@ -16,7 +16,6 @@ function loadStartScreen() {
   let horizontal = true; // current ship orientation
   loadGridSetup(main);
   loadShipStart([2, 3], main);
-  const clearBoardBtn = document.createElement('button');
   const randomizeBoardBtn = document.createElement('button');
 
   const startButton = document.createElement('button');
@@ -240,6 +239,9 @@ function loadStartScreen() {
     shipContainer.setAttribute('id', 'shipContainer');
     const resetBoardBtn = document.createElement('button');
     resetBoardBtn.textContent = 'Reset Board';
+    resetBoardBtn.addEventListener('click', () => {
+      loadStartScreen();
+    });
 
     // Create a ship div for every ship
     shipSizeArray.forEach((shipSize) => {
