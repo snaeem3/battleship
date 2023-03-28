@@ -53,14 +53,7 @@ function loadStartScreen() {
 
     function dragEnter(event) {
       event.preventDefault();
-      const hoveredCells = document.querySelectorAll('.dragHover');
-      hoveredCells.forEach((cell) =>
-        cell.classList.remove(
-          'dragHover',
-          'dragHover-valid',
-          'dragHover-invalid'
-        )
-      );
+      removeDragHoverCells();
 
       const xPosition = parseInt(event.target.dataset.xSetup);
       const yPosition = parseInt(event.target.dataset.ySetup);
@@ -86,7 +79,7 @@ function loadStartScreen() {
           const cell = document.querySelector(
             `[data-x-setup~="${x}"][data-y-setup~="${yPosition}"]`
           );
-          console.log(cell.textContent);
+          // console.log(cell.textContent);
           cell.classList.add('dragHover');
           cell.classList.add(hoverClass);
         }
@@ -117,14 +110,7 @@ function loadStartScreen() {
     }
 
     function drop(event) {
-      const hoveredCells = document.querySelectorAll('.dragHover');
-      hoveredCells.forEach((cell) =>
-        cell.classList.remove(
-          'dragHover',
-          'dragHover-valid',
-          'dragHover-invalid'
-        )
-      );
+      removeDragHoverCells();
 
       const xPosition = parseInt(event.target.dataset.xSetup);
       const yPosition = parseInt(event.target.dataset.ySetup);
@@ -171,13 +157,19 @@ function loadStartScreen() {
       const shipContainer = document.querySelector('#shipContainer');
       shipContainer.removeChild(shipContainer.firstChild);
 
+      // Set the next ship as draggable
       if (shipContainer.hasChildNodes()) {
         shipContainer.firstChild.draggable = true;
       }
 
+      // Reset horizontal orientation
+      horizontal = true;
+
       // Enable start button if all ships placed
+      // Disable rotate button if all ships placed
       if (shipContainer.childElementCount < 1) {
         document.querySelector('#start-button').disabled = false;
+        document.querySelector('#rotate-button').disabled = true;
       }
     }
 
@@ -234,6 +226,7 @@ function loadStartScreen() {
 
   function loadShipStart(shipSizeArray = [5, 4, 3, 3, 2], parentNode = main) {
     const rotateBtn = document.createElement('button');
+    rotateBtn.setAttribute('id', 'rotate-button');
     rotateBtn.addEventListener('click', rotateCurrentShip);
     rotateBtn.textContent = 'Rotate Ship';
     const shipContainer = document.createElement('div');
@@ -256,6 +249,10 @@ function loadStartScreen() {
       function dragStart(event) {
         event.dataTransfer.clearData();
         event.dataTransfer.setData('text/plain', JSON.stringify({ shipSize }));
+      }
+      ship.addEventListener('dragend', dragEnd);
+      function dragEnd(event) {
+        removeDragHoverCells();
       }
 
       // Add divs equal to ship size to each ship div
@@ -287,6 +284,13 @@ function loadStartScreen() {
           .classList.add('vertical');
       }
     }
+  }
+
+  function removeDragHoverCells() {
+    const hoveredCells = document.querySelectorAll('.dragHover');
+    hoveredCells.forEach((cell) =>
+      cell.classList.remove('dragHover', 'dragHover-valid', 'dragHover-invalid')
+    );
   }
 }
 
@@ -342,10 +346,10 @@ function loadBoardContainer(currentPlayer, showAllShips) {
         // Cell has been attacked
         if (gridValues[i][j].hitStatus) {
           cell.classList.add('hit');
-          cell.textContent = 'X';
+          // cell.textContent = 'X';
         } else {
           cell.classList.add('miss');
-          cell.textContent = 'O';
+          // cell.textContent = 'O';
         }
       }
 
