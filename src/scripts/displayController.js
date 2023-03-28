@@ -29,13 +29,14 @@ function loadStartScreen() {
   main.appendChild(startButton);
 
   function loadGridSetup(parentNode, gridSize = 12) {
+    document.querySelector(':root').style.setProperty('--grid-size', gridSize);
     const gridContainer = document.createElement('div');
     gridContainer.classList.add('grid');
 
     for (let i = 0; i < gridSize; i++) {
       for (let j = 0; j < gridSize; j++) {
         const cell = document.createElement('div');
-        cell.textContent = `${i}, ${j}`;
+        // cell.textContent = `${i}, ${j}`;
         cell.dataset.xSetup = i;
         cell.dataset.ySetup = j;
         cell.classList.add('grid-cell');
@@ -247,7 +248,7 @@ function loadStartScreen() {
     shipSizeArray.forEach((shipSize) => {
       const ship = document.createElement('div');
       ship.classList.add('draggable');
-      ship.classList.add('ship');
+      // ship.classList.add('ship');
 
       // ship.draggable = true;
       ship.dataset.isHorizontal = true;
@@ -263,7 +264,7 @@ function loadStartScreen() {
         // shipUnit.textContent = i;
         shipUnit.dataset.index = i;
         shipUnit.classList.add('ship-unit');
-        shipUnit.classList.add('grid-cell');
+        // shipUnit.classList.add('grid-cell');
         ship.appendChild(shipUnit);
       }
 
@@ -295,7 +296,6 @@ function loadGame() {
   removeAllChildNodes(player2Container);
   gameController.resetPlayers();
   gameController.setPlayers(); // input player 1 selected ship locations here
-  main.append(player1Container, player2Container);
 
   const boardContainer1 = loadBoardContainer(
     gameController.players[0],
@@ -310,9 +310,19 @@ function loadGame() {
 
   player1Container.appendChild(boardContainer1);
   player2Container.appendChild(boardContainer2);
+
+  const player1Name = document.createElement('h2');
+  player1Name.textContent = gameController.players[0].name;
+  player1Name.classList.add('player-name');
+
+  const player2Name = document.createElement('h2');
+  player2Name.textContent = gameController.players[1].name;
+  player2Name.classList.add('player-name');
+
+  main.append(player1Container, player1Name, player2Container, player2Name);
 }
 
-function loadBoardContainer(currentPlayer, showAllShips, node) {
+function loadBoardContainer(currentPlayer, showAllShips) {
   const boardContainer = document.createElement('div');
   boardContainer.classList.add('grid');
   const gridValues = currentPlayer.playerBoard.board;
@@ -348,9 +358,6 @@ function loadBoardContainer(currentPlayer, showAllShips, node) {
   }
 
   return boardContainer;
-
-  // parentNode.append(boardContainer);
-  // parentNode = boardContainer;
 }
 
 function loadWinnerMessage(winningPlayer) {
