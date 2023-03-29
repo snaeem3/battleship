@@ -15,6 +15,13 @@ function loadStartScreen() {
 
   const setupControls = document.createElement('div');
   setupControls.setAttribute('id', 'setup-controls');
+  setupControls.classList.add('box-shadow');
+
+  const setupInstructions = document.createElement('p');
+  setupInstructions.setAttribute('id', 'setup-instructions');
+  setupInstructions.textContent = 'Drag and drop your ships on the board';
+
+  setupControls.appendChild(setupInstructions);
 
   let horizontal = true; // current ship orientation
   loadGridSetup(main);
@@ -277,7 +284,7 @@ function loadStartScreen() {
 
     shipContainer.firstChild.draggable = true;
 
-    parentNode.append(shipContainer, rotateBtn, resetBoardBtn);
+    parentNode.append(rotateBtn, shipContainer, resetBoardBtn);
 
     function rotateCurrentShip() {
       horizontal = !horizontal;
@@ -373,7 +380,10 @@ function loadBoardContainer(currentPlayer, showAllShips) {
 function loadWinnerMessage(winningPlayer) {
   disableGridCells();
 
-  const winningMessage = document.createElement('div');
+  const gameEndPopup = document.createElement('div');
+  gameEndPopup.classList.add('pop-up');
+
+  const winningMessage = document.createElement('h2');
   winningMessage.setAttribute('id', 'winning-message');
   winningMessage.textContent = `${winningPlayer.name} wins!`;
 
@@ -381,7 +391,8 @@ function loadWinnerMessage(winningPlayer) {
   newGameBtn.textContent = 'Start New Game';
   newGameBtn.addEventListener('click', loadStartScreen);
 
-  main.append(winningMessage, newGameBtn);
+  gameEndPopup.append(winningMessage, newGameBtn);
+  main.prepend(gameEndPopup);
 }
 
 function clickHandlerBoard(event) {
