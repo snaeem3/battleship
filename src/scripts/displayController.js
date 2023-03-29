@@ -13,9 +13,12 @@ function loadStartScreen() {
   removeAllChildNodes(main);
   gameController.clearSetupShips();
 
+  const setupControls = document.createElement('div');
+  setupControls.setAttribute('id', 'setup-controls');
+
   let horizontal = true; // current ship orientation
   loadGridSetup(main);
-  loadShipStart([2, 3], main);
+  loadShipStart([2, 3], setupControls);
   const randomizeBoardBtn = document.createElement('button');
 
   const startButton = document.createElement('button');
@@ -26,7 +29,8 @@ function loadStartScreen() {
     loadGame();
   });
 
-  main.appendChild(startButton);
+  setupControls.appendChild(startButton);
+  main.appendChild(setupControls);
 
   function loadGridSetup(parentNode, gridSize = 12) {
     document.querySelector(':root').style.setProperty('--grid-size', gridSize);
@@ -224,7 +228,10 @@ function loadStartScreen() {
     }
   }
 
-  function loadShipStart(shipSizeArray = [5, 4, 3, 3, 2], parentNode = main) {
+  function loadShipStart(
+    shipSizeArray = [5, 4, 3, 3, 2],
+    parentNode = setupControls
+  ) {
     const rotateBtn = document.createElement('button');
     rotateBtn.setAttribute('id', 'rotate-button');
     rotateBtn.addEventListener('click', rotateCurrentShip);
@@ -270,7 +277,7 @@ function loadStartScreen() {
 
     shipContainer.firstChild.draggable = true;
 
-    parentNode.append(rotateBtn, shipContainer, resetBoardBtn);
+    parentNode.append(shipContainer, rotateBtn, resetBoardBtn);
 
     function rotateCurrentShip() {
       horizontal = !horizontal;
@@ -312,9 +319,6 @@ function loadGame() {
     player2Container
   );
 
-  player1Container.appendChild(boardContainer1);
-  player2Container.appendChild(boardContainer2);
-
   const player1Name = document.createElement('h2');
   player1Name.textContent = gameController.players[0].name;
   player1Name.classList.add('player-name');
@@ -323,7 +327,9 @@ function loadGame() {
   player2Name.textContent = gameController.players[1].name;
   player2Name.classList.add('player-name');
 
-  main.append(player1Container, player1Name, player2Container, player2Name);
+  player1Container.append(boardContainer1, player1Name);
+  player2Container.append(boardContainer2, player2Name);
+  main.append(player1Container, player2Container);
 }
 
 function loadBoardContainer(currentPlayer, showAllShips) {
@@ -382,6 +388,15 @@ function clickHandlerBoard(event) {
   console.log('clickHandlerBoard called');
   console.log(event.target);
   const coords = [event.target.dataset.xCoord, event.target.dataset.yCoord];
+
+  const player1Name = document.createElement('h2');
+  player1Name.textContent = gameController.players[0].name;
+  player1Name.classList.add('player-name');
+
+  const player2Name = document.createElement('h2');
+  player2Name.textContent = gameController.players[1].name;
+  player2Name.classList.add('player-name');
+
   // Check if chosen coordinate has not been attacked yet
   if (
     gameController.players[1].playerBoard.board[coords[0]][coords[1]]
@@ -390,8 +405,9 @@ function clickHandlerBoard(event) {
     let roundResult = gameController.playRoundActive(coords);
     console.log(roundResult);
     removeAllChildNodes(player2Container);
-    player2Container.appendChild(
-      loadBoardContainer(gameController.players[1], false, player2Container)
+    player2Container.append(
+      loadBoardContainer(gameController.players[1], false, player2Container),
+      player2Name
     );
 
     // Check if player 2 lost
@@ -404,8 +420,9 @@ function clickHandlerBoard(event) {
       roundResult = gameController.playRoundActive();
       console.log(roundResult);
       removeAllChildNodes(player1Container);
-      player1Container.appendChild(
-        loadBoardContainer(gameController.players[0], true)
+      player1Container.append(
+        loadBoardContainer(gameController.players[0], true),
+        player1Name
       );
 
       // Check if player 1 lost
