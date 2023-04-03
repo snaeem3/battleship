@@ -80,13 +80,10 @@ function generateRandomBoard(shipSizeArr = [2, 2], gridSize = 12) {
   return randomBoard;
 }
 
-function playRoundActive(
-  coords = inActivePlayer.playerBoard.getRandomAttackableSpace()
-) {
+function playRoundActive(coords) {
   // Have the active player play a round on opponents coords then swap active and inactive
-  // Use a random attackable space from the inactive player board if no coordinate given
 
-  const roundResults = activePlayer.playRound(inActivePlayer, coords);
+  const roundResults = activePlayer.playRound(inActivePlayer, coords); // playRound will automatically plug likely coords for computer player
   const temp = activePlayer;
   activePlayer = inActivePlayer;
   inActivePlayer = temp;

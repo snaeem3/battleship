@@ -59,3 +59,24 @@ test('Computer player can play round', () => {
   // console.log(`Hit ship? ${hitShip}`);
   // console.log(player1.playerBoard.board);
 });
+
+test('likelyHit chooses a neighboring cell after a hit', () => {
+  const testBoard1 = gameboard();
+  const testBoard2 = gameboard();
+
+  const coordinates = [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+  ];
+  testBoard1.insertShip(coordinates);
+  testBoard2.insertShip(coordinates);
+
+  const player1 = player('Steve', testBoard1, false);
+  const player2 = player('Computer', testBoard2, true);
+
+  player2.playRound(player1, [0, 1]);
+  player2.playRound(player1, [0, 0]);
+  const { chosenCoords, hitShip } = player2.playRound(player1);
+  expect(chosenCoords).toStrictEqual([1, 0]);
+});

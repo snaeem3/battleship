@@ -127,6 +127,41 @@ export const gameboard = function (gridSize = 12) {
     };
   };
 
+  const getHits = () => {
+    const hits = [];
+
+    // Loop through each row and column of the board
+    for (let row = 0; row < board.length; row++) {
+      for (let col = 0; col < board[row].length; col++) {
+        // If the space has been hit and contains a ship, add it to the hits array
+        if (
+          board[row][col].hitStatus === true &&
+          board[row][col].containsShip
+        ) {
+          hits.push([row, col]);
+        }
+      }
+    }
+
+    return hits;
+  };
+
+  const validNeighbor = (coord) => {
+    // returns true if given coordinates are valid unhit spaces
+    if (
+      coord[0] >= 0 &&
+      coord[0] < board.length &&
+      coord[1] >= 0 &&
+      coord[1] < board.length
+    ) {
+      // coord is within board bounds
+      if (board[coord[0]][coord[1]].hitStatus === null) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return {
     get board() {
       return board;
@@ -139,5 +174,7 @@ export const gameboard = function (gridSize = 12) {
     allShipsSunk,
     getRandomAttackableSpace,
     getPossibleShipCoords,
+    getHits,
+    validNeighbor,
   };
 };
