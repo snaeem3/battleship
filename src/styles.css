@@ -220,7 +220,7 @@ main {
   padding: 2rem 1rem;
   transform: translate(-50%, -50%);
   width: 50%;
-  background: rgb(252, 252, 252);
+  background: rgba(252, 252, 252, 0.77);
   z-index: 99;
   border-radius: var(--border-radius-default);
   border: solid 2px black;

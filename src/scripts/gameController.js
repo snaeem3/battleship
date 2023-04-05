@@ -101,6 +101,7 @@ export {
   players,
   setPlayers,
   resetPlayers,
+  generateRandomBoard,
   playRoundActive,
   playerLoses,
 };

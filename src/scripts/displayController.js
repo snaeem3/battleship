@@ -12,6 +12,7 @@ function loadStartScreen() {
   console.log('Start screen loaded');
   removeAllChildNodes(main);
   gameController.clearSetupShips();
+  gameController.resetPlayers();
 
   const setupControls = document.createElement('div');
   setupControls.setAttribute('id', 'setup-controls');
@@ -27,6 +28,8 @@ function loadStartScreen() {
   loadGridSetup(main);
   loadShipStart();
   const randomizeBoardBtn = document.createElement('button');
+  randomizeBoardBtn.textContent = 'Random Board';
+  randomizeBoardBtn.addEventListener('click', populateRandomBoard);
 
   const startButton = document.createElement('button');
   startButton.setAttribute('id', 'start-button');
@@ -36,7 +39,7 @@ function loadStartScreen() {
     loadGame();
   });
 
-  setupControls.appendChild(startButton);
+  setupControls.append(randomizeBoardBtn, startButton);
   main.appendChild(setupControls);
 
   function loadGridSetup(parentNode, gridSize = 12) {
@@ -235,6 +238,33 @@ function loadStartScreen() {
     }
   }
 
+  function populateRandomBoard() {
+    loadStartScreen(); // clears grid
+    const randomBoard = gameController.generateRandomBoard();
+    gameController.setPlayers(player('Player 1', randomBoard, false)); // Tell game controller to set player 1 board as the random board
+
+    const gridContainer = document.querySelector('.grid');
+    for (let x = 0; x < randomBoard.board.length; x++) {
+      for (let y = 0; y < randomBoard.board[x].length; y++) {
+        if (randomBoard.board[x][y].containsShip) {
+          const cell = gridContainer.querySelector(
+            `[data-x-setup~="${x}"][data-y-setup~="${y}"]`
+          );
+          cell.classList.add('ship');
+        }
+      }
+    }
+
+    // Remove draggable ships
+    const shipContainer = document.querySelector('#shipContainer');
+    removeAllChildNodes(shipContainer);
+
+    if (shipContainer.childElementCount < 1) {
+      document.querySelector('#start-button').disabled = false;
+      document.querySelector('#rotate-button').disabled = true;
+    }
+  }
+
   function loadShipStart(
     shipSizeArray = [5, 4, 3, 3, 2],
     parentNode = setupControls
@@ -312,8 +342,13 @@ function loadGame() {
   removeAllChildNodes(main); // remove grid setup elements
   removeAllChildNodes(player1Container);
   removeAllChildNodes(player2Container);
-  gameController.resetPlayers();
-  gameController.setPlayers();
+
+  // Random board sets players when called
+  // If ships were dragged onto board, sets players needs to be called here
+  if (gameController.players.length === 0) {
+    gameController.resetPlayers();
+    gameController.setPlayers();
+  }
 
   const boardContainer1 = loadBoardContainer(
     gameController.players[0],
@@ -377,7 +412,8 @@ function loadBoardContainer(currentPlayer, showAllShips) {
   return boardContainer;
 }
 
-function loadWinnerMessage(winningPlayer) {
+function loadWinner(winningPlayer) {
+  revealPlayer2Ships();
   disableGridCells();
 
   const gameEndPopup = document.createElement('div');
@@ -424,7 +460,7 @@ function clickHandlerBoard(event) {
     // Check if player 2 lost
     if (gameController.playerLoses(gameController.players[1])) {
       console.log('Player 2 lost');
-      loadWinnerMessage(gameController.players[0]);
+      loadWinner(gameController.players[0]);
     } else {
       // Otherwise play the next round
 
@@ -439,10 +475,22 @@ function clickHandlerBoard(event) {
       // Check if player 1 lost
       if (gameController.playerLoses(gameController.players[0])) {
         console.log('Player 1 lost');
-        loadWinnerMessage(gameController.players[1]);
+        loadWinner(gameController.players[1]);
       }
     }
   }
+}
+
+function revealPlayer2Ships() {
+  // to be called when game ends
+  removeAllChildNodes(player2Container);
+  const player2Name = document.createElement('h2');
+  player2Name.textContent = gameController.players[1].name;
+  player2Name.classList.add('player-name');
+  player2Container.append(
+    loadBoardContainer(gameController.players[1], true, player2Container), // true value indicates ships will be revealed
+    player2Name
+  );
 }
 
 function disableGridCells() {
@@ -462,6 +510,6 @@ export {
   loadStartScreen,
   loadGame,
   loadBoardContainer,
-  loadWinnerMessage,
+  loadWinner,
   clickHandlerBoard,
 };
