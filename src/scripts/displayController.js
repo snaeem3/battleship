@@ -25,7 +25,7 @@ function loadStartScreen() {
 
   let horizontal = true; // current ship orientation
   loadGridSetup(main);
-  loadShipStart([2, 3], setupControls);
+  loadShipStart();
   const randomizeBoardBtn = document.createElement('button');
 
   const startButton = document.createElement('button');
@@ -313,7 +313,7 @@ function loadGame() {
   removeAllChildNodes(player1Container);
   removeAllChildNodes(player2Container);
   gameController.resetPlayers();
-  gameController.setPlayers(); // input player 1 selected ship locations here
+  gameController.setPlayers();
 
   const boardContainer1 = loadBoardContainer(
     gameController.players[0],

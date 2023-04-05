@@ -77,7 +77,7 @@ export const player = function (name, playerBoard, computerPlayer) {
       });
     });
 
-    console.log(`Likely coords found: ${likelyCoords}`);
+    // console.log(`Likely coords found: ${likelyCoords}`);
     if (likelyCoords.length > 0) {
       return likelyCoords[0];
     }

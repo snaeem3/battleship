@@ -46,7 +46,7 @@ function generateComputerPlayer(shipSizeArr, gridSize = 12) {
   return player('Computer', computerBoard, true);
 }
 
-function generateRandomBoard(shipSizeArr = [2, 2], gridSize = 12) {
+function generateRandomBoard(shipSizeArr = [5, 4, 3, 3, 2], gridSize = 12) {
   const randomBoard = gameboard(gridSize);
   // randomBoard.insertShip([[2, 2]]); // Temporary board code
 
