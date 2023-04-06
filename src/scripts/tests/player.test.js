@@ -55,9 +55,6 @@ test('Computer player can play round', () => {
   expect(
     player1.playerBoard.board[chosenCoords[0]][chosenCoords[1]].hitStatus
   ).not.toBeNull();
-  // console.log(chosenCoords);
-  // console.log(`Hit ship? ${hitShip}`);
-  // console.log(player1.playerBoard.board);
 });
 
 test('likelyHit chooses a neighboring cell after a hit', () => {

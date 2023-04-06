@@ -48,7 +48,6 @@ function generateComputerPlayer(shipSizeArr, gridSize = 12) {
 
 function generateRandomBoard(shipSizeArr = [5, 4, 3, 3, 2], gridSize = 12) {
   const randomBoard = gameboard(gridSize);
-  // randomBoard.insertShip([[2, 2]]); // Temporary board code
 
   // Assume total ship area < grid area or add check here later
 

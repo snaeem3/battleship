@@ -28,8 +28,6 @@ export const gameboard = function (gridSize = 12) {
 
       // Check if any coordinates have a ship in them already
       if (board[coordinate[0]][coordinate[1]].containsShip) {
-        // console.log(board);
-        // console.log(`coordinate: ${coordinate}`);
         throw new Error(
           `[${coordinate[0]},${coordinate[1]}] is already occupied`
         );
@@ -57,7 +55,6 @@ export const gameboard = function (gridSize = 12) {
       board[coordinate[0]][coordinate[1]].hitStatus = false;
     } else {
       board[coordinate[0]][coordinate[1]].hitStatus = true;
-      // console.log(board[coordinate[0]][coordinate[1]].shipIndex);
       ships[board[coordinate[0]][coordinate[1]].shipIndex].hit();
     }
   };

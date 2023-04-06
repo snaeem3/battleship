@@ -1,13 +1,10 @@
 import { gameboard } from './gameboard';
 
-// const prompt = require('prompt-sync')({ sigint: true });
-
 export const player = function (name, playerBoard, computerPlayer) {
   const playRound = (
     opponent,
     targetCoords = chooseUnhitSpace(opponent.playerBoard)
   ) => {
-    // const targetCoords = chooseUnhitSpace(opponent.playerBoard);
     opponent.playerBoard.receiveAttack(targetCoords);
 
     // Return hitShip = true if the player hit an opponent ship
@@ -77,7 +74,6 @@ export const player = function (name, playerBoard, computerPlayer) {
       });
     });
 
-    // console.log(`Likely coords found: ${likelyCoords}`);
     if (likelyCoords.length > 0) {
       return likelyCoords[0];
     }

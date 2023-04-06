@@ -9,7 +9,6 @@ player1Container.setAttribute('id', 'player1-container');
 player2Container.setAttribute('id', 'player2-container');
 
 function loadStartScreen() {
-  console.log('Start screen loaded');
   removeAllChildNodes(main);
   gameController.clearSetupShips();
   gameController.resetPlayers();
@@ -432,8 +431,6 @@ function loadWinner(winningPlayer) {
 }
 
 function clickHandlerBoard(event) {
-  console.log('clickHandlerBoard called');
-  console.log(event.target);
   const coords = [event.target.dataset.xCoord, event.target.dataset.yCoord];
 
   const player1Name = document.createElement('h2');
@@ -450,7 +447,6 @@ function clickHandlerBoard(event) {
       .hitStatus === null
   ) {
     let roundResult = gameController.playRoundActive(coords);
-    console.log(roundResult);
     removeAllChildNodes(player2Container);
     player2Container.append(
       loadBoardContainer(gameController.players[1], false, player2Container),
@@ -459,7 +455,7 @@ function clickHandlerBoard(event) {
 
     // Check if player 2 lost
     if (gameController.playerLoses(gameController.players[1])) {
-      console.log('Player 2 lost');
+      // console.log('Player 2 lost');
       loadWinner(gameController.players[0]);
     } else {
       // Otherwise play the next round
@@ -474,7 +470,7 @@ function clickHandlerBoard(event) {
 
       // Check if player 1 lost
       if (gameController.playerLoses(gameController.players[0])) {
-        console.log('Player 1 lost');
+        // console.log('Player 1 lost');
         loadWinner(gameController.players[1]);
       }
     }
