@@ -22,6 +22,7 @@ Skills involved with this project:
   - Drag & drop styling
   - Hover effects
   - Pop-up styling
+  - favicon
   - Cursor styling
   - CSS Flex
   - CSS Grid
